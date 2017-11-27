@@ -18,7 +18,11 @@ package raft
 //
 
 import "sync"
-import "labrpc"
+import (
+	"labrpc"
+	//"expvar"
+	"time"
+)
 
 // import "bytes"
 // import "encoding/gob"
@@ -102,6 +106,9 @@ func (rf *Raft) readPersist(data []byte) {
 //
 type RequestVoteArgs struct {
 	// Your data here (2A, 2B).
+	term int
+	candidateId int
+	lastLogIndex int
 }
 
 //
@@ -208,9 +215,39 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
 	// Your initialization code here (2A, 2B, 2C).
 
+
+	//2A start
+
+	//启动定时器
+	timer1 :=time.NewTimer(time.Second *2)
+	<- timer1.C
+	RequestVoteReply{}
 	// initialize from state persisted before a crash
 	rf.readPersist(persister.ReadRaftState())
 
 
 	return rf
 }
+
+/**
+   有三种角色
+ */
+type basicClass  struct {
+	state string
+}
+
+type follower struct {
+	basicClass
+
+}
+
+type codidate struct{
+	basicClass
+
+}
+
+type leader struct{
+	basicClass
+
+}
+
