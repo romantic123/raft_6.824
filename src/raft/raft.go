@@ -109,6 +109,7 @@ type RequestVoteArgs struct {
 	term int
 	candidateId int
 	lastLogIndex int
+	lastLogTerm int
 }
 
 //
@@ -117,6 +118,8 @@ type RequestVoteArgs struct {
 //
 type RequestVoteReply struct {
 	// Your data here (2A).
+	Term int
+	VoteGranted int
 }
 
 //
@@ -125,6 +128,9 @@ type RequestVoteReply struct {
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	// Your code here (2A, 2B).
 }
+
+
+
 
 //
 // example code to send a RequestVote RPC to a server.
@@ -195,6 +201,21 @@ func (rf *Raft) Kill() {
 	// Your code here, if desired.
 }
 
+
+func (rf *Raft) createVoteArgs() *RequestVoteArgs{
+	var requestVoteArgs=&RequestVoteArgs{}
+	requestVoteArgs.term=1
+	requestVoteArgs.candidateId=1
+	requestVoteArgs.lastLogIndex=1
+	requestVoteArgs.lastLogTerm=1
+	return  requestVoteArgs
+}
+
+func (rf *Raft) createVoteReply() * RequestVoteReply{
+	var requestVoteReply=&RequestVoteReply{}
+	requestVoteReply.Term=1
+	requestVoteReply.VoteGranted=1
+}
 //
 // the service or tester wants to create a Raft server. the ports
 // of all the Raft servers (including this one) are in peers[]. this
@@ -221,13 +242,19 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	//启动定时器
 	timer1 :=time.NewTimer(time.Second *2)
 	<- timer1.C
-	RequestVoteReply{}
+
+
+
+
+
+	rf.RequestVote(rf.createVoteArgs(),rf.createVoteReply())
 	// initialize from state persisted before a crash
 	rf.readPersist(persister.ReadRaftState())
 
 
 	return rf
 }
+
 
 /**
    有三种角色
